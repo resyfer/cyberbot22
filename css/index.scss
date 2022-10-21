@@ -1,0 +1,107 @@
+* {
+  padding: 0;
+  margin: 0;
+  user-select: none;
+}
+
+@font-face {
+  font-family: Vigilanc;
+  src: url("../assets/vigilanc.ttf");
+}
+
+* {
+  font-family: Vigilanc;
+  color: white;
+}
+
+body {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-image: url("../assets/702562.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+div#bg-tint {
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+  height: 100vh;
+  width: 100%;
+}
+
+div#superman {
+  position: absolute;
+  z-index: 2;
+
+  img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+  }
+}
+
+div.bullet {
+  background-color: rgb(0, 255, 255);
+  box-shadow: 0 0 15px 1px rgb(0, 255, 255);
+  position: absolute;
+  box-shadow: 0 0 10px 1px;
+  z-index: 2;
+}
+
+div#score {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.5rem;
+  z-index: 2;
+}
+
+div#hp {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-size: 1.5rem;
+  z-index: 2;
+}
+
+div#game-over {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100vh;
+  width: 100%;
+  font-size: 10rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 2;
+
+  div#current-score {
+    font-size: 5rem;
+  }
+
+  div#restart {
+    font-size: 1.5rem;
+    padding: 1vh 3vh;
+    background: rgb(70,190,212);
+    background: linear-gradient(90deg, rgba(70,190,212,1) 0%, rgba(208,60,171,1) 100%);
+    border-radius: 1vh;
+    margin-top: 5vh;
+    box-shadow: 0 0 15px 1px rgb(0, 255, 255);
+    cursor: pointer;
+  }
+}
+
+div.obstacle {
+  position: absolute;
+  background-color: rgb(208, 60, 171);
+  box-shadow: 0 0 15px 1px rgb(208, 60, 171);
+  border-radius: 2vh;
+  z-index: 2;
+}

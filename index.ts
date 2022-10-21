@@ -1,4 +1,5 @@
-const OFFSET = 100;
+const OFFSET = 200;
+const CAR_OFFSET = OFFSET / 4;
 const TICK_RATE = 20; // 20 ms => 50 tick server
 const BULLET_DAMAGE = 10;
 
@@ -10,7 +11,11 @@ const obstacleContainer = document.getElementById(
   "obstacles"
 ) as HTMLDivElement;
 const scoreContainer = document.getElementById("score") as HTMLDivElement;
-
+const gameOverScreen = document.getElementById("game-over") as HTMLDivElement;
+const gameOverScore = document.getElementById(
+  "current-score"
+) as HTMLDivElement;
+const hpContainer = document.getElementById("hp") as HTMLDivElement;
 interface Rectangle {
   left: number;
   top: number;
@@ -49,20 +54,6 @@ class Utils {
     const rect1: Rectangle = Utils.getBoundingRectangle(item1);
     const rect2: Rectangle = Utils.getBoundingRectangle(item2);
 
-    // if (
-    //   (rect1.left < rect2.left && rect1.right < rect2.right) ||
-    //   (rect1.left > rect2.left && rect1.right > rect2.right)
-    // ) {
-    //   return false;
-    // } else if (
-    //   (rect1.top < rect2.top && rect1.bottom < rect2.bottom) ||
-    //   (rect1.top > rect2.top && rect1.bottom > rect2.bottom)
-    // ) {
-    //   return false;
-    // } else {
-    //   return true;
-    // }
-
     if (rect1.top > rect2.bottom || rect1.bottom < rect2.top) {
       return false;
     } else if (rect1.right < rect2.left || rect1.left > rect2.right) {
@@ -91,10 +82,10 @@ class Utils {
     }
   }
 
-  static click(superman: Superman, event: MouseEvent) {
+  static click(superman: Superman) {
     const bullet = new Bullet(
-      superman.position.x + 10,
-      superman.position.y,
+      superman.position.x + 3 * (superman.size.width / 8),
+      superman.position.y + superman.size.height / 4,
       Superman.bullets.list.length
     );
 
@@ -103,7 +94,7 @@ class Utils {
 }
 
 class Game {
-  private static score = 0;
+  public static score = 0;
   public static obstacles: {
     list: (Obstacle | null)[];
     count: number;
@@ -114,7 +105,7 @@ class Game {
 
   static incr(amount = 10) {
     Game.score += amount;
-    scoreContainer.innerText = Game.score.toString();
+    scoreContainer.innerText = `Score: ${Game.score.toString()}`;
   }
 
   static reset() {
@@ -161,17 +152,19 @@ class Superman extends Item {
     count: 0,
   };
 
-  private move = 5;
+  private move = 10;
+  public lives;
 
   constructor() {
     super(100, window.innerHeight / 2, 75, 175);
+    this.lives = 5;
 
     Utils.setPos(supermanDiv, this);
     Utils.setSize(supermanDiv, this);
 
     window.addEventListener("keydown", (e) => Utils.keyboardPress(this, e));
 
-    window.addEventListener("click", (e) => Utils.click(this, e));
+    window.addEventListener("click", (e) => Utils.click(this));
   }
 
   destroy() {
@@ -184,19 +177,24 @@ class Superman extends Item {
 
   change(dir: "UP" | "DOWN") {
     if (dir === "UP") {
-      if (this.position.y - this.size.height / 2 - this.move > OFFSET) {
+      if (this.position.y - this.size.height / 2 - this.move > CAR_OFFSET) {
         this.position.y -= this.move;
       }
     } else {
       if (
         this.position.y + this.size.height / 2 + this.move <
-        window.innerHeight - OFFSET
+        window.innerHeight - CAR_OFFSET
       ) {
         this.position.y += this.move;
       }
     }
 
     Utils.setPos(supermanDiv, this);
+  }
+
+  damage() {
+    this.lives--;
+    hpContainer.innerText = `Lives: ${this.lives.toString()}`;
   }
 }
 
@@ -277,6 +275,11 @@ class Obstacle extends Item {
 
     this.div = document.createElement("div");
     this.div.classList.add("obstacle");
+
+    // const ufo = document.createElement("img");
+    // ufo.setAttribute("src", "./assets/ufo.png");
+    // this.div.appendChild(ufo);
+
     Utils.setSize(this.div, this);
     obstacleContainer.appendChild(this.div);
 
@@ -333,20 +336,22 @@ class Obstacle extends Item {
       }
 
       if (Utils.checkCollision(superman, obstacle)) {
-        SPAWN_STOP = true;
-        superman.destroy();
-        clearInterval(checkInterval);
-        obstacleContainer.remove();
-        bulletContainer.remove();
+        superman.damage();
+        obstacle.destroy();
+
+        if (superman.lives === 0) {
+          SPAWN_STOP = true;
+          superman.destroy();
+          clearInterval(checkInterval);
+          obstacleContainer.remove();
+          bulletContainer.remove();
+          scoreContainer.remove();
+          hpContainer.remove();
+          gameOverScore.innerText = `Score: ${Game.score.toString()}`;
+          gameOverScreen.style.display = "flex";
+          return;
+        }
       }
-
-      // const supermanRect = Utils.getBoundingRectangle(superman);
-      // const obstacleRect = Utils.getBoundingRectangle(obstacle);
-
-      // if (
-      //   supermanRect.right > obstacleRect.left &&
-      // ) {
-      // }
 
       Superman.bullets.list.forEach((bullet) => {
         if (bullet === null) {

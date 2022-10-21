@@ -5,17 +5,27 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cyberbot - Resyfer</title>
-  <link rel="stylesheet" href="./index.css">
+  <link rel="stylesheet" href="./css/index.css">
 </head>
 <body>
-  <div id="score">0</div>
-  <div id="superman"></div>
+  <div id="bg-tint"></div>
+  <div id="score">Score: 0</div>
+  <div id="hp">Lives: 5</div>
+  <div id="superman">
+    <img src="./assets/car.png" alt="Superman's car">
+  </div>
   <div id="bullets">
     <!-- <div class="bullet"></div> -->
   </div>
 
   <div id="obstacles">
     <!-- <div class="obstacle"></div> -->
+  </div>
+  <div id="game-over">
+    Game Over
+    <div id="current-score"></div>
+    <br/>
+    <div id="restart" onclick="location.reload()">Restart</div>
   </div>
 </body>
 <script src="./index.js"></script>

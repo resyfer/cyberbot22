@@ -1,5 +1,5 @@
 "use strict";
-const OFFSET = window.innerHeight / 20;
+const OFFSET = 100;
 const TICK_RATE = 20;
 const BULLET_DAMAGE = 10;
 let SPAWN_STOP = false;
@@ -13,7 +13,7 @@ class Utils {
         return Math.floor(Math.random() * diff) * multiplier + Math.abs(low);
     }
     static randomSpawn(callback) {
-        const time = Math.round(Utils.getRandomNum(125, 50) * TICK_RATE);
+        const time = Math.round(Utils.getRandomNum(125, 75) * TICK_RATE);
         setTimeout(() => {
             callback();
             if (!SPAWN_STOP) {
@@ -32,12 +32,10 @@ class Utils {
     static checkCollision(item1, item2) {
         const rect1 = Utils.getBoundingRectangle(item1);
         const rect2 = Utils.getBoundingRectangle(item2);
-        if ((rect1.left < rect2.left && rect1.right < rect2.right) ||
-            (rect1.left > rect2.left && rect1.right > rect2.right)) {
+        if (rect1.top > rect2.bottom || rect1.bottom < rect2.top) {
             return false;
         }
-        else if ((rect1.top < rect2.top && rect1.bottom < rect2.bottom) ||
-            (rect1.top > rect2.top && rect1.bottom > rect2.bottom)) {
+        else if (rect1.right < rect2.left || rect1.left > rect2.right) {
             return false;
         }
         else {
@@ -49,9 +47,21 @@ class Utils {
         element.style.top = `${rect.top}px`;
         element.style.left = `${rect.left}px`;
     }
-    static setSize(element, item) {
-        element.style.height = `${item.size.height}px`;
-        element.style.width = `${item.size.width}px`;
+    static setSize(element, item, multiplier = 1) {
+        element.style.height = `${item.size.height * multiplier}px`;
+        element.style.width = `${item.size.width * multiplier}px`;
+    }
+    static keyboardPress(superman, event) {
+        if (event.key === "ArrowDown" || event.key === "s") {
+            superman.change("DOWN");
+        }
+        else if (event.key === "ArrowUp" || event.key === "w") {
+            superman.change("UP");
+        }
+    }
+    static click(superman, event) {
+        const bullet = new Bullet(superman.position.x + 10, superman.position.y, Superman.bullets.list.length);
+        Superman.bullets.list.push(bullet);
     }
 }
 class Game {
@@ -61,8 +71,8 @@ class Game {
         count: 0,
     };
     static incr(amount = 10) {
-        scoreContainer.innerText = Game.score.toString();
         Game.score += amount;
+        scoreContainer.innerText = Game.score.toString();
     }
     static reset() {
         Game.score = 0;
@@ -94,21 +104,14 @@ class Superman extends Item {
     };
     move = 5;
     constructor() {
-        super(OFFSET * 4, window.innerHeight / 2, 75, 175);
+        super(100, window.innerHeight / 2, 75, 175);
         Utils.setPos(supermanDiv, this);
         Utils.setSize(supermanDiv, this);
-        window.addEventListener("keydown", (e) => {
-            if (e.key === "ArrowDown" || e.key === "s") {
-                this.change("DOWN");
-            }
-            else if (e.key === "ArrowUp" || e.key === "w") {
-                this.change("UP");
-            }
-        });
-        window.addEventListener("click", () => {
-            const bullet = new Bullet(this.position.x + 10, this.position.y, Superman.bullets.list.length);
-            Superman.bullets.list.push(bullet);
-        });
+        window.addEventListener("keydown", (e) => Utils.keyboardPress(this, e));
+        window.addEventListener("click", (e) => Utils.click(this, e));
+    }
+    destroy() {
+        supermanDiv.remove();
     }
     get location() {
         return this.position;
@@ -166,12 +169,8 @@ class Obstacle extends Item {
     constructor(index) {
         const health = Utils.getRandomNum(40, 20, 10);
         const size = health * 2;
-        super(window.innerWidth, Utils.getRandomNum(window.innerHeight - OFFSET, OFFSET), size, size);
+        super(window.innerWidth, Utils.getRandomNum(window.innerHeight - OFFSET - size / 2, OFFSET + size / 2), size, size);
         this.index = index;
-        this.div = document.createElement("div");
-        this.div.classList.add("obstacle");
-        Utils.setSize(this.div, this);
-        obstacleContainer.appendChild(this.div);
         this.health = {
             original: health,
             remaining: health,
@@ -180,6 +179,10 @@ class Obstacle extends Item {
             width: size,
             height: size,
         };
+        this.div = document.createElement("div");
+        this.div.classList.add("obstacle");
+        Utils.setSize(this.div, this);
+        obstacleContainer.appendChild(this.div);
         Utils.setPos(this.div, this);
         this.update = setInterval(() => {
             this.position.x -= this.velocity;
@@ -193,11 +196,15 @@ class Obstacle extends Item {
         return this.position;
     }
     hit() {
+        console.log;
         Game.incr(BULLET_DAMAGE);
         this.health.remaining -= BULLET_DAMAGE;
-        this.size.height = this.size.width = this.health.remaining;
+        this.size.height = this.size.width = this.health.remaining * 2;
         Utils.setPos(this.div, this);
         Utils.setSize(this.div, this);
+        if (this.health.remaining === 0) {
+            this.destroy();
+        }
     }
     get life() {
         return this.health;
@@ -212,10 +219,17 @@ class Obstacle extends Item {
 (() => {
     const superman = new Superman();
     Utils.randomSpawn(Game.spawnObstacles);
-    setInterval(() => {
+    const checkInterval = setInterval(() => {
         Game.obstacles.list.forEach((obstacle) => {
             if (obstacle === null) {
                 return;
+            }
+            if (Utils.checkCollision(superman, obstacle)) {
+                SPAWN_STOP = true;
+                superman.destroy();
+                clearInterval(checkInterval);
+                obstacleContainer.remove();
+                bulletContainer.remove();
             }
             Superman.bullets.list.forEach((bullet) => {
                 if (bullet === null) {
@@ -227,5 +241,5 @@ class Obstacle extends Item {
                 }
             });
         });
-    }, TICK_RATE);
+    }, TICK_RATE / 5);
 })();

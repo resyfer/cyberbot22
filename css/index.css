@@ -7,6 +7,10 @@
           user-select: none;
 }
 
+html {
+  font-size: 2.3vh;
+}
+
 @font-face {
   font-family: Vigilanc;
   src: url("../assets/vigilanc.ttf");
@@ -25,6 +29,33 @@ body {
   background-size: cover;
 }
 
+div#start {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.7rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 70%;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 2vh;
+  border-radius: 2vh;
+}
+div#start div#start-btn {
+  margin: auto;
+}
+
+div#ammo {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  font-size: 1.5rem;
+  z-index: 2;
+}
+
 div#bg-tint {
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 1;
@@ -35,6 +66,7 @@ div#bg-tint {
 div#superman {
   position: absolute;
   z-index: 2;
+  display: none;
 }
 div#superman img {
   position: absolute;
@@ -50,6 +82,7 @@ div.bullet {
   position: absolute;
   box-shadow: 0 0 10px 1px;
   z-index: 2;
+  border-radius: 0 50% 50% 0;
 }
 
 div#score {
@@ -58,6 +91,15 @@ div#score {
   right: 15px;
   font-size: 1.5rem;
   z-index: 2;
+}
+
+div#best {
+  position: absolute;
+  top: 15px;
+  margin: auto;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
 }
 
 div#hp {
@@ -76,17 +118,24 @@ div#game-over {
   transform: translate(-50%, -50%);
   height: 100vh;
   width: 100%;
-  font-size: 10rem;
-  background-color: rgba(0, 0, 0, 0.6);
+  font-size: 8rem;
+  background-color: rgba(0, 0, 0, 0.7);
   justify-content: center;
   align-items: center;
   flex-direction: column;
   z-index: 2;
 }
-div#game-over div#current-score {
-  font-size: 5rem;
+div#game-over div#game-over-current-score {
+  font-size: 4rem;
 }
-div#game-over div#restart {
+div#game-over div#game-over-best-score {
+  font-size: 4rem;
+}
+div#game-over div#game-over-message {
+  font-size: 2.5rem;
+}
+
+div.button {
   font-size: 1.5rem;
   padding: 1vh 3vh;
   background: rgb(70, 190, 212);
@@ -99,8 +148,6 @@ div#game-over div#restart {
 
 div.obstacle {
   position: absolute;
-  background-color: rgb(208, 60, 171);
-  box-shadow: 0 0 15px 1px rgb(208, 60, 171);
-  border-radius: 2vh;
+  border-radius: 1vh;
   z-index: 2;
 }/*# sourceMappingURL=index.css.map */

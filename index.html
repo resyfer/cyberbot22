@@ -8,9 +8,25 @@
   <link rel="stylesheet" href="./css/index.css">
 </head>
 <body>
+  <div id="start">
+  Cat Man is roaming the skies of Gotem City. Suddenly, he sees blocks of unknown energy floating in the air.
+  <br/><br/>
+  One solution was found to be to blow them out of the sky using the lazer torpedoes installed in the Cat Mobile.
+  <br/><br/>
+  Another was to simply ignore the threat and let it go past you, in which case it would be believed that you may have a hand in the injuries of multiple innocent residents across Gotem City.
+  <br/><br/>
+  You want to help Gotem City survive, so get started on getting high scores!!
+  <br/><br/>
+  Use W/S or ↑/↓ to control the Cat Mobile and Click to shoot! Remember, each bullet lost doesn't come back in that life!
+    <br/>
+    <br/>
+    <div id="start-btn" class="button" onclick="Game.start()">Start</div>
+  </div>
   <div id="bg-tint"></div>
   <div id="score">Score: 0</div>
+  <div id="best">Best: 0</div>
   <div id="hp">Lives: 5</div>
+  <div id="ammo">Ammo: 51</div>
   <div id="superman">
     <img src="./assets/car.png" alt="Superman's car">
   </div>
@@ -23,9 +39,11 @@
   </div>
   <div id="game-over">
     Game Over
-    <div id="current-score"></div>
+    <div id="game-over-current-score"></div>
+    <div id="game-over-best-score"></div>
+    <div id="game-over-message"></div>
     <br/>
-    <div id="restart" onclick="location.reload()">Restart</div>
+    <div id="restart" class="button" onclick="location.reload()">Restart</div>
   </div>
 </body>
 <script src="./index.js"></script>
